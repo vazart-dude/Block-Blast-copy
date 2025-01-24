@@ -6,8 +6,8 @@ pygame.init()
 
 # Размеры экрана
 width, height = 400, 600
-block_size = 40  
-grid_size = 8  
+block_size = 40
+grid_size = 8
 
 # Цвета
 white = (255, 255, 255)
@@ -32,6 +32,7 @@ TEMPLATES = [
     [[0, 1], [1, 1]],  # Обратный Г-образный блок
 ]
 
+
 # Класс блока
 class Block:
     def __init__(self, template, x, y, field_x, field_y):
@@ -55,8 +56,8 @@ class Block:
                     pygame.draw.rect(screen, self.color, rect)
                     pygame.draw.rect(screen, black, rect, 2)  # Контур блока
 
-    def move(self, pos):
-        self.position = pos
+    def move(self, pos_x, pos_y):
+        self.position = pos_x, pos_y
 
     def get_cells(self):
         """Возвращает координаты клеток, занимаемых блоком."""
@@ -68,6 +69,7 @@ class Block:
                     y = (self.position[1] - self.field_y) // block_size + row_idx
                     cells.append((y, x))
         return cells
+
 
 # Основная функция игры
 def main():
@@ -131,7 +133,6 @@ def main():
             if all(field[row][col] is not None for row in range(grid_size)):
                 cols_to_clear.append(col)
 
-
         # Очистка строк
         for row in rows_to_clear:
             for col in range(grid_size):
@@ -158,12 +159,16 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for block in blocks:
+                    mouse_x, mouse_y = event.pos
                     if pygame.Rect(
-                        block.position[0], block.position[1],
+                        block.position[0],
+                        block.position[1],
                         len(block.template[0]) * block_size,
                         len(block.template) * block_size,
                     ).collidepoint(event.pos):
                         block.dragging = True
+                        offset_x = mouse_x - block.position[0]
+                        offset_y = mouse_y - block.position[1]
 
             if event.type == pygame.MOUSEBUTTONUP:
                 for block in blocks:
@@ -173,19 +178,22 @@ def main():
                             place_block(block)
                             clear_lines()  # Очистка строк/столбцов после размещения
                             blocks.remove(block)  # Убираем блок после размещения
-                            if not blocks:  #Генерируем новые
+                            if not blocks:  # Генерируем новые
                                 blocks = generate_blocks()
 
             if event.type == pygame.MOUSEMOTION:
                 for block in blocks:
                     if block.dragging:
-                        block.move(event.pos)
+                        mouse_x, mouse_y = event.pos
+                        square_x = mouse_x - offset_x
+                        square_y = mouse_y - offset_y
+                        block.move(square_x, square_y)
 
         screen.fill(blue)
 
         # Счет
         font = pygame.font.Font(None, 36)
-        score_text = font.render(f'Score: {score}', True, white)
+        score_text = font.render(f"Score: {score}", True, white)
         screen.blit(score_text, (10, 10))
 
         # Поле
@@ -198,7 +206,9 @@ def main():
 
                 # Рисование блоков
                 if field[row][col]:
-                    pygame.draw.rect(screen, field[row][col], (x, y, block_size, block_size))
+                    pygame.draw.rect(
+                        screen, field[row][col], (x, y, block_size, block_size)
+                    )
                     pygame.draw.rect(screen, black, (x, y, block_size, block_size), 2)
 
         # Рисование блоков
@@ -207,6 +217,7 @@ def main():
 
         pygame.display.flip()
         clock.tick(30)
+
 
 if __name__ == "__main__":
     main()
