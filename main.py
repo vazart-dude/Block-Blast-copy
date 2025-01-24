@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import os
 
 pygame.init()
 
@@ -19,6 +20,9 @@ block_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Красный, зел
 # Настройка окна
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Block Blast Clone")
+script_path = os.path.dirname(os.path.abspath(__file__))
+icon = pygame.image.load(os.path.join(script_path, "data", "icon.png"))
+pygame.display.set_icon(icon)
 
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
