@@ -4,17 +4,28 @@ import sys
 
 pygame.init()
 
+#TODO : пофиксить цвет блоков, т.е. сделать из более приятными
+#TODO : улучшить внешний вид блоков - тени
+#TODO : возвращать блок в началную позицию, если он был отпущен в invalid position
+#TODO : улучшить рамещение блоков????
+
+offset_x = 0
+offset_y = 0
+
 # Размеры экрана
 width, height = 400, 600
 block_size = 40
 grid_size = 8
 
 # Цвета
-white = (255, 255, 255)
-black = (0, 0, 0)
-gray = (200, 200, 200)
-blue = (135, 206, 250)  # Фон
-block_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Красный, зелёный, синий
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (200, 200, 200)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+BG_COLOR = (135, 206, 250)  # Фон
+block_colors = [RED, GREEN, BLUE]  # Красный, зелёный, синий
 
 # Настройка окна
 screen = pygame.display.set_mode((width, height))
@@ -28,8 +39,11 @@ TEMPLATES = [
     [[1, 1], [1, 1]],  # Квадрат
     [[1, 1, 1]],  # Длинная горизонтальная линия
     [[1], [1], [1]],  # Длинная вертикальная линия
-    [[1, 0], [1, 1]],  # Г-образный блок
-    [[0, 1], [1, 1]],  # Обратный Г-образный блок
+    [[1, 0], [1, 1]],  # Левый нижний уголок
+    [[0, 1], [1, 1]],  # Правый нижний уголок
+    [[1, 1], [1, 0]],  # Левый верхний уголок
+    [[1, 1], [0, 1]],  # Правый верхний уголок
+    [[1, 1, 1], [0, 0, 1], [0, 0, 1]]  # Большой Г-образный
 ]
 
 
@@ -54,12 +68,14 @@ class Block:
                         block_size,
                     )
                     pygame.draw.rect(screen, self.color, rect)
-                    pygame.draw.rect(screen, black, rect, 2)  # Контур блока
+                    pygame.draw.rect(screen, BLACK, rect, 2)  # Контур блока
 
     def move(self, pos_x, pos_y):
         self.position = pos_x, pos_y
 
     def get_cells(self):
+        global offset_x
+        global offset_y
         """Возвращает координаты клеток, занимаемых блоком."""
         cells = []
         for row_idx, row in enumerate(self.template):
@@ -68,6 +84,7 @@ class Block:
                     x = (self.position[0] - self.field_x) // block_size + col_idx
                     y = (self.position[1] - self.field_y) // block_size + row_idx
                     cells.append((y, x))
+        print(cells)
         return cells
 
 
@@ -152,6 +169,8 @@ def main():
     # Основной цикл
     running = True
     while running:
+        global offset_x
+        global offset_y
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -171,6 +190,7 @@ def main():
                         offset_y = mouse_y - block.position[1]
 
             if event.type == pygame.MOUSEBUTTONUP:
+                mouse_position = event.pos
                 for block in blocks:
                     if block.dragging:
                         block.dragging = False
@@ -189,11 +209,11 @@ def main():
                         square_y = mouse_y - offset_y
                         block.move(square_x, square_y)
 
-        screen.fill(blue)
+        screen.fill(BG_COLOR)
 
         # Счет
         font = pygame.font.Font(None, 36)
-        score_text = font.render(f"Score: {score}", True, white)
+        score_text = font.render(f"Score: {score}", True, WHITE)
         screen.blit(score_text, (10, 10))
 
         # Поле
@@ -201,22 +221,22 @@ def main():
             for col in range(grid_size):
                 x = field_x + col * block_size
                 y = field_y + row * block_size
-                pygame.draw.rect(screen, gray, (x, y, block_size, block_size), 0)
-                pygame.draw.rect(screen, black, (x, y, block_size, block_size), 2)
+                pygame.draw.rect(screen, GRAY, (x, y, block_size, block_size), 0)
+                pygame.draw.rect(screen, BLACK, (x, y, block_size, block_size), 2)
 
                 # Рисование блоков
                 if field[row][col]:
                     pygame.draw.rect(
                         screen, field[row][col], (x, y, block_size, block_size)
                     )
-                    pygame.draw.rect(screen, black, (x, y, block_size, block_size), 2)
+                    pygame.draw.rect(screen, BLACK, (x, y, block_size, block_size), 2)
 
         # Рисование блоков
         for block in blocks:
             block.draw()
 
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(60)
 
 
 if __name__ == "__main__":
