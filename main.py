@@ -4,8 +4,7 @@ import sys
 
 pygame.init()
 
-#TODO : пофиксить цвет блоков, т.е. сделать из более приятными
-#TODO : улучшить внешний вид блоков - тени
+#TODO : пофиксить цвет блоков, т.е. сделать из более приятными, улучшить внешний вид блоков - тени
 #TODO : возвращать блок в началную позицию, если он был отпущен в invalid position
 #TODO : улучшить рамещение блоков????
 
@@ -200,6 +199,12 @@ def main():
                             blocks.remove(block)  # Убираем блок после размещения
                             if not blocks:  # Генерируем новые
                                 blocks = generate_blocks()
+                        else:
+                            # Возвращаем блок на стартовую позицию, если он не может быть размещен
+                            template = block.template
+                            x = 50 + blocks.index(block) * 100
+                            y = height - 150
+                            block.move(x, y)
 
             if event.type == pygame.MOUSEMOTION:
                 for block in blocks:
