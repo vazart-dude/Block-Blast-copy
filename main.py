@@ -12,7 +12,7 @@ offset_x = 0
 offset_y = 0
 
 # Размеры экрана
-width, height = 400, 600
+width, height = 450, 600
 block_size = 40
 grid_size = 8
 
@@ -23,8 +23,10 @@ GRAY = (200, 200, 200)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+PURPLE = (128, 0, 128)
 BG_COLOR = (135, 206, 250)  # Фон
-block_colors = [RED, GREEN, BLUE]  # Красный, зелёный, синий
+block_colors = [RED, GREEN, BLUE, YELLOW, PURPLE]  # Красный, зелёный, синий
 
 # Настройка окна
 screen = pygame.display.set_mode((width, height))
@@ -92,20 +94,30 @@ def main():
     clock = pygame.time.Clock()
     score = 0
 
-    # Игровое поле
+    # Игровое поле 
     field = [[None for _ in range(grid_size)] for _ in range(grid_size)]
     field_x = (width - (grid_size * block_size)) // 2
     field_y = 100
 
-    # Генерация трёх блоков
     def generate_blocks():
         blocks = []
+        block_width = max(len(template[0]) for template in TEMPLATES) * block_size
+        gap = 20  # расстояние между блоками
+        x = 50
+        templates = list(TEMPLATES)
+        random.shuffle(templates)
         for i in range(3):
-            template = random.choice(TEMPLATES)
-            x = 50 + i * 100
-            y = height - 150
-            block = Block(template, x, y, field_x, field_y)
+            template = templates.pop(0)
+            if len(blocks) > 0 and blocks[-1].template == template:  # если последний блок такой же, как текущий
+                if len(templates) > 0:
+                    template = templates.pop(0)
+                else:
+                    break
+            block = Block(template, x, height - 150, field_x, field_y)
             blocks.append(block)
+            x += block_width + gap
+            if x + block_width > width:
+                break
         return blocks
 
     blocks = generate_blocks()
