@@ -231,6 +231,17 @@ def main():
         templates = list(TEMPLATES)
         random.shuffle(templates)
         for i in range(3):
+
+            probability = random.randint(1, 100)
+            if probability <= 30:
+                template = random.choice(templates[0]) # Квадраты
+            if 30 < probability <= 60 :
+                template = random.choice(templates[1]) # Линии
+            if 50 < probability <= 75 :
+                template = random.choice(templates[2]) # Маленькие уголки
+            if probability >= 85:
+                template = random.choice(templates[3]) # Большие уголки
+
             template_group = random.choice(templates)
             block = Block(random.choice(template_group), x, height - 150, field_x, field_y)
             blocks.append(block)
