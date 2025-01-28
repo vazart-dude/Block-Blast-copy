@@ -30,24 +30,29 @@ pygame.display.set_caption("Block Blast Clone")
 
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
-    #Квадраты
+    # Квадраты
     [[[1]],  # Одинарный блок
     [[1, 1], [1, 1]]], # Квадрат 2х2
-    #Линии
+    # Линии
     [[[1, 1]],  # Горизонтальная линия
     [[1], [1]],  # Вертикальная линия
     [[1, 1, 1]],  # Длинная горизонтальная линия
     [[1], [1], [1]]],  # Длинная вертикальная линия
-    #Маленькие уголки
+    # Маленькие уголки
     [[[1, 0], [1, 1]],  # Левый нижний уголок
     [[0, 1], [1, 1]],  # Правый нижний уголок
     [[1, 1], [1, 0]],  # Левый верхний уголок
     [[1, 1], [0, 1]]],  # Правый верхний уголок
-    #Большие уголки
+    # Г-образные блоки
+    [[[1, 1], [0, 1], [0, 1]],  # Правый верхний уголок
+    [[1, 1], [1, 0], [1, 0]],  # Левый верхний уголок
+    [[0, 1], [0, 1], [1, 1]], # Правый нижний уголок
+    [[1, 0], [1, 0], [1, 1]]], # Левый нижний уголок
+    # Большие уголки
     [[[1, 1, 1], [0, 0, 1], [0, 0, 1]], # Правый верхний уголок
     [[1, 1, 1], [1, 0, 0], [1, 0, 0]], # Левый верхний уголок
     [[0, 0, 1], [0, 0, 1], [1, 1, 1]], # Правый нижний уголок
-    [[1, 0, 0], [1, 0, 0], [1, 1, 1]],] # Левый нижний уголок
+    [[1, 0, 0], [1, 0, 0], [1, 1, 1]]] # Левый нижний уголок
 ]
 
 
@@ -233,14 +238,16 @@ def main():
         for i in range(3):
 
             probability = random.randint(1, 100)
-            if probability <= 30:
+            if probability <= 20:
                 template = random.choice(templates[0]) # Квадраты
-            if 30 < probability <= 60 :
+            if 20 < probability <= 45 :
                 template = random.choice(templates[1]) # Линии
-            if 50 < probability <= 75 :
+            if 45 < probability <= 70 :
                 template = random.choice(templates[2]) # Маленькие уголки
-            if probability >= 85:
-                template = random.choice(templates[3]) # Большие уголки
+            if 70 < probability <= 90 :
+                template = random.choice(templates[3]) # Г-образные
+            if probability >= 90:
+                template = random.choice(templates[4]) # Большие уголки
 
             template_group = random.choice(templates)
             block = Block(random.choice(template_group), x, height - 150, field_x, field_y)
@@ -354,7 +361,7 @@ def main():
                         block.move(square_x, square_y)
 
         # Проверяем победу
-        if score >= 500:
+        if score >= 1000:
             show_victory_menu(score)
 
         # Проверяем проигрыш
