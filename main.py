@@ -30,17 +30,24 @@ pygame.display.set_caption("Block Blast Clone")
 
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
-    [[1]],  # Одинарный блок
-    [[1, 1]],  # Горизонтальная линия
+    #Квадраты
+    [[[1]],  # Одинарный блок
+    [[1, 1], [1, 1]]], # Квадрат 2х2
+    #Линии
+    [[[1, 1]],  # Горизонтальная линия
     [[1], [1]],  # Вертикальная линия
-    [[1, 1], [1, 1]],  # Квадрат
     [[1, 1, 1]],  # Длинная горизонтальная линия
-    [[1], [1], [1]],  # Длинная вертикальная линия
-    [[1, 0], [1, 1]],  # Левый нижний уголок
+    [[1], [1], [1]]],  # Длинная вертикальная линия
+    #Маленькие уголки
+    [[[1, 0], [1, 1]],  # Левый нижний уголок
     [[0, 1], [1, 1]],  # Правый нижний уголок
     [[1, 1], [1, 0]],  # Левый верхний уголок
-    [[1, 1], [0, 1]],  # Правый верхний уголок
-    [[1, 1, 1], [0, 0, 1], [0, 0, 1]],  # Большой Г-образный
+    [[1, 1], [0, 1]]],  # Правый верхний уголок
+    #Большие уголки
+    [[[1, 1, 1], [0, 0, 1], [0, 0, 1]], # Правый верхний уголок
+    [[1, 1, 1], [1, 0, 0], [1, 0, 0]], # Левый верхний уголок
+    [[0, 0, 1], [0, 0, 1], [1, 1, 1]], # Правый нижний уголок
+    [[1, 0, 0], [1, 0, 0], [1, 1, 1]],] # Левый нижний уголок
 ]
 
 
@@ -218,14 +225,14 @@ def main():
 
     def generate_blocks():
         blocks = []
-        block_width = max(len(template[0]) for template in TEMPLATES) * block_size
+        block_width = max(len(temp[0]) for template in TEMPLATES for temp in template) * block_size
         gap = 20  # расстояние между блоками
         x = 50
         templates = list(TEMPLATES)
         random.shuffle(templates)
         for i in range(3):
-            template = templates.pop(0)
-            block = Block(template, x, height - 150, field_x, field_y)
+            template_group = random.choice(templates)
+            block = Block(random.choice(template_group), x, height - 150, field_x, field_y)
             blocks.append(block)
             x += block_width + gap
         return blocks
@@ -288,6 +295,7 @@ def main():
             for row in range(grid_size):
                 field[row][col] = None
 
+        #Подсчет очков
         score += len(rows_to_clear + cols_to_clear) * (grid_size * 3 + 5)
 
     running = True
@@ -335,7 +343,7 @@ def main():
                         block.move(square_x, square_y)
 
         # Проверяем победу
-        if score >= 250:
+        if score >= 500:
             show_victory_menu(score)
 
         # Проверяем проигрыш
