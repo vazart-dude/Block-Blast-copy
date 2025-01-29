@@ -385,8 +385,16 @@ def main():
         if score >= 1000:
             show_victory_menu(score)
 
-        # Проверяем проигрыш
+        # Проверяем проигрыш с последующей записью рекордов
         if is_game_over():
+            with open("records.txt", "r") as file:
+                records = list(map(int, file.readline().split()))
+                print(records)
+                records.append(score)
+                records.sort(reverse=True)
+                print(records)                
+            with open("records.txt", "w") as file:
+                file.write(' '.join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
 
         screen.fill(BG_COLOR)
