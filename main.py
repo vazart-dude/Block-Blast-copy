@@ -34,28 +34,38 @@ pygame.display.set_icon(icon)
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
     # Квадраты
-    [[[1]],  # Одинарный блок
-    [[1, 1], [1, 1]]], # Квадрат 2х2
+    [
+        [[1]], # Одинарный блок
+        [[1, 1], [1, 1]] # Квадрат 2х2
+    ],    
     # Линии
-    [[[1, 1]],  # Горизонтальная линия
-    [[1], [1]],  # Вертикальная линия
-    [[1, 1, 1]],  # Длинная горизонтальная линия
-    [[1], [1], [1]]],  # Длинная вертикальная линия
+    [
+        [[1, 1]],  # Горизонтальная линия
+        [[1], [1]],  # Вертикальная линия
+        [[1, 1, 1]],  # Длинная горизонтальная линия
+        [[1], [1], [1]],  # Длинная вертикальная линия
+    ],  
     # Маленькие уголки
-    [[[1, 0], [1, 1]],  # Левый нижний уголок
-    [[0, 1], [1, 1]],  # Правый нижний уголок
-    [[1, 1], [1, 0]],  # Левый верхний уголок
-    [[1, 1], [0, 1]]],  # Правый верхний уголок
+    [
+        [[1, 0], [1, 1]],  # Левый нижний уголок
+        [[0, 1], [1, 1]],  # Правый нижний уголок
+        [[1, 1], [1, 0]],  # Левый верхний уголок
+        [[1, 1], [0, 1]],  # Правый верхний уголок
+    ],
     # Г-образные блоки
-    [[[1, 1], [0, 1], [0, 1]],  # Правый верхний уголок
-    [[1, 1], [1, 0], [1, 0]],  # Левый верхний уголок
-    [[0, 1], [0, 1], [1, 1]], # Правый нижний уголок
-    [[1, 0], [1, 0], [1, 1]]], # Левый нижний уголок
+    [
+        [[1, 1], [0, 1], [0, 1]],  # Правый верхний уголок
+        [[1, 1], [1, 0], [1, 0]],  # Левый верхний уголок
+        [[0, 1], [0, 1], [1, 1]],  # Правый нижний уголок
+        [[1, 0], [1, 0], [1, 1]],  # Левый нижний уголок
+    ],  
     # Большие уголки
-    [[[1, 1, 1], [0, 0, 1], [0, 0, 1]], # Правый верхний уголок
-    [[1, 1, 1], [1, 0, 0], [1, 0, 0]], # Левый верхний уголок
-    [[0, 0, 1], [0, 0, 1], [1, 1, 1]], # Правый нижний уголок
-    [[1, 0, 0], [1, 0, 0], [1, 1, 1]]] # Левый нижний уголок
+    [
+        [[1, 1, 1], [0, 0, 1], [0, 0, 1]],  # Правый верхний уголок
+        [[1, 1, 1], [1, 0, 0], [1, 0, 0]],  # Левый верхний уголок
+        [[0, 0, 1], [0, 0, 1], [1, 1, 1]],  # Правый нижний уголок
+        [[1, 0, 0], [1, 0, 0], [1, 1, 1]],  # Левый нижний уголок
+    ],  
 ]
 
 
@@ -199,7 +209,10 @@ def show_game_over_menu(score):
     button_box = button_rect.inflate(20, 10)
 
     while True:
-        screen.fill(BG_COLOR)
+        s = pygame.Surface((450, 600))
+        s.set_alpha(5) # прозрачность
+        s.fill(BG_COLOR)
+        screen.blit(s, (0, 0))
         screen.blit(title_text, title_rect)
         screen.blit(score_text, score_rect)
         pygame.draw.rect(screen, GRAY, button_box)  # Кнопка
@@ -233,27 +246,32 @@ def main():
 
     def generate_blocks():
         blocks = []
-        block_width = max(len(temp[0]) for template in TEMPLATES for temp in template) * block_size
+        block_width = (
+            max(len(temp[0]) for template in TEMPLATES for temp in template)
+            * block_size
+        )
         gap = 20  # расстояние между блоками
-        x = 50
+        x = 35
         templates = list(TEMPLATES)
         random.shuffle(templates)
         for i in range(3):
 
             probability = random.randint(1, 100)
             if probability <= 20:
-                template = random.choice(templates[0]) # Квадраты
-            if 20 < probability <= 45 :
-                template = random.choice(templates[1]) # Линии
-            if 45 < probability <= 70 :
-                template = random.choice(templates[2]) # Маленькие уголки
-            if 70 < probability <= 90 :
-                template = random.choice(templates[3]) # Г-образные
+                template = random.choice(templates[0])  # Квадраты
+            if 20 < probability <= 45:
+                template = random.choice(templates[1])  # Линии
+            if 45 < probability <= 70:
+                template = random.choice(templates[2])  # Маленькие уголки
+            if 70 < probability <= 90:
+                template = random.choice(templates[3])  # Г-образные
             if probability >= 90:
-                template = random.choice(templates[4]) # Большие уголки
+                template = random.choice(templates[4])  # Большие уголки
 
             template_group = random.choice(templates)
-            block = Block(random.choice(template_group), x, height - 150, field_x, field_y)
+            block = Block(
+                random.choice(template_group), x, height - 150, field_x, field_y
+            )
             blocks.append(block)
             x += block_width + gap
         return blocks
@@ -316,7 +334,7 @@ def main():
             for row in range(grid_size):
                 field[row][col] = None
 
-        #Подсчет очков
+        # Подсчет очков
         score += len(rows_to_clear + cols_to_clear) * (grid_size * 3 + 5)
 
     running = True
@@ -393,7 +411,7 @@ def main():
             block.draw()
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(144)
 
 
 if __name__ == "__main__":
