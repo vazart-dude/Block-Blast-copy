@@ -259,6 +259,39 @@ def show_game_over_menu(score):
 
         pygame.display.flip()
 
+def show_pause_menu():
+    # Полупрозрачный фон
+    overlay = pygame.Surface((width, height), pygame.SRCALPHA)
+    overlay.fill((0,0,0, 128))  # RGBA: черный с 50% прозрачностью
+    screen.blit(overlay, (0,0))
+    
+    # Кнопка возврата в меню
+    menu_button_text = pygame.font.Font(None, 36).render("В главное меню", True, WHITE)
+    menu_button_rect = menu_button_text.get_rect(center=(width//2, height//2 + 50))
+    screen.blit(menu_button_text, menu_button_rect)
+    pygame.draw.rect(screen, (150,150,150), menu_button_rect.inflate(10,5), 2)
+    
+    # Кнопка продолжить игру
+    continue_button_text = pygame.font.Font(None, 36).render("Продолжить игру", True, WHITE)
+    continue_button_rect = continue_button_text.get_rect(center=(width//2, height//2 - 50))
+    screen.blit(continue_button_text, continue_button_rect)
+    pygame.draw.rect(screen, (150,150,150), continue_button_rect.inflate(10,5), 2)
+    
+    while True:
+        # Обработка событий в меню
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if menu_button_rect.inflate(10,5).collidepoint(event.pos):
+                    restart_game()
+                if continue_button_rect.inflate(10,5).collidepoint(event.pos):
+                    return  # Продолжить игру
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                return  # Выход из паузы
+                
+        pygame.display.update()
 
 # Основная функция игры
 def main():
@@ -367,9 +400,31 @@ def main():
         score += len(rows_to_clear + cols_to_clear) * (grid_size * 3 + 5)
 
     running = True
+    paused = False
     while running:
         global offset_x, offset_y
 
+        screen.fill(BG_COLOR)
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f"Счет: {score}", True, WHITE)
+        screen.blit(score_text, (10, 10))
+
+        # Отрисовка кнопки паузы поверх игрового поля
+        pause_button_font = pygame.font.Font(None, 24)
+        pause_button_text = pause_button_font.render("Пауза", True, WHITE)
+        pause_button_rect = pause_button_text.get_rect(topright=(width - 10, 10))
+        pause_button_box = pause_button_rect.inflate(10, 10)
+        screen.blit(pause_button_text, pause_button_rect)
+        pygame.draw.rect(screen, GRAY, pause_button_box, 2)  # Контур кнопки
+
+        # Проверяем нажатие кнопки паузы
+        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(pygame.mouse.get_pos()):
+            paused = not paused
+            if paused:
+                show_pause_menu()
+            else:
+                continue
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -425,12 +480,6 @@ def main():
             with open("records.txt", "w") as file:
                 file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
-
-        screen.fill(BG_COLOR)
-
-        font = pygame.font.Font(None, 36)
-        score_text = font.render(f"Счет: {score}", True, WHITE)
-        screen.blit(score_text, (10, 10))
 
         for row in range(grid_size):
             for col in range(grid_size):
