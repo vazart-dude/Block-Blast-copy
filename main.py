@@ -26,7 +26,7 @@ block_colors = [
 
 # Настройка окна
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Block Blast Clone")
+pygame.display.set_caption("Block Blast")
 script_path = os.path.dirname(os.path.abspath(__file__))
 icon = pygame.image.load(os.path.join(script_path, "data", "icon.png"))
 pygame.display.set_icon(icon)
@@ -34,17 +34,14 @@ pygame.display.set_icon(icon)
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
     # Квадраты
-    [
-        [[1]], # Одинарный блок
-        [[1, 1], [1, 1]] # Квадрат 2х2
-    ],    
+    [[[1]], [[1, 1], [1, 1]]],  # Одинарный блок  # Квадрат 2х2
     # Линии
     [
         [[1, 1]],  # Горизонтальная линия
         [[1], [1]],  # Вертикальная линия
         [[1, 1, 1]],  # Длинная горизонтальная линия
         [[1], [1], [1]],  # Длинная вертикальная линия
-    ],  
+    ],
     # Маленькие уголки
     [
         [[1, 0], [1, 1]],  # Левый нижний уголок
@@ -58,14 +55,14 @@ TEMPLATES = [
         [[1, 1], [1, 0], [1, 0]],  # Левый верхний уголок
         [[0, 1], [0, 1], [1, 1]],  # Правый нижний уголок
         [[1, 0], [1, 0], [1, 1]],  # Левый нижний уголок
-    ],  
+    ],
     # Большие уголки
     [
         [[1, 1, 1], [0, 0, 1], [0, 0, 1]],  # Правый верхний уголок
         [[1, 1, 1], [1, 0, 0], [1, 0, 0]],  # Левый верхний уголок
         [[0, 0, 1], [0, 0, 1], [1, 1, 1]],  # Правый нижний уголок
         [[1, 0, 0], [1, 0, 0], [1, 1, 1]],  # Левый нижний уголок
-    ],  
+    ],
 ]
 
 
@@ -164,15 +161,23 @@ def show_victory_menu(score):
 
 # Меню старта игры
 def show_start_menu():
-    """Отображает стартовое меню с кнопкой начала игры."""
-    font = pygame.font.Font(None, 48)
-    text = font.render("Block Blast", True, WHITE)
+    """Отображает стартовое меню с кнопкой начала игры и рекордами."""
+    title_font = pygame.font.Font(None, 36)
+    text = title_font.render("Block Blast", True, WHITE)
     text_rect = text.get_rect(center=(width // 2, height // 2 - 50))
 
-    button_font = pygame.font.Font(None, 36)
+    button_font = pygame.font.Font(None, 28)
     button_text = button_font.render("СТАРТ", True, WHITE)
     button_rect = button_text.get_rect(center=(width // 2, height // 2 + 30))
     button_box = button_rect.inflate(20, 10)
+
+    records_font = pygame.font.Font(None, 24)
+    records_title = records_font.render("Рекорды:", True, WHITE)
+    records_title_rect = records_title.get_rect(
+        topright=(width - 20, 20)
+    )
+
+    records = load_records()  # Загружаем рекорды
 
     while True:
         screen.fill(BG_COLOR)
@@ -181,6 +186,16 @@ def show_start_menu():
         pygame.draw.rect(screen, BLACK, button_box, 2)  # Контур кнопки
         screen.blit(button_text, button_rect)
 
+        # Выводим рекордоы
+        screen.blit(records_title, records_title_rect)
+
+        for i, record in enumerate(records):
+            record_text = records_font.render(f"{i + 1}. {record}", True, WHITE)
+            record_rect = record_text.get_rect(
+                topright=(width - 25, records_title_rect.bottom + 10 + i * 20)
+            )
+            screen.blit(record_text, record_rect)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -188,9 +203,23 @@ def show_start_menu():
             if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(
                 event.pos
             ):
-                return  # Переход к основной игре
+                return
 
         pygame.display.flip()
+
+
+def load_records():
+    """Загружает три рекорда из файла records.txt."""
+    records = []
+    try:
+        with open("records.txt", "r") as file:
+            records = file.readline().strip().split()
+    except FileNotFoundError:
+        records = ["Нет рекордов"] * 3
+    except Exception as e:
+        records = [f"Ошибка: {str(e)}"]
+
+    return records
 
 
 def show_game_over_menu(score):
@@ -210,7 +239,7 @@ def show_game_over_menu(score):
 
     while True:
         s = pygame.Surface((450, 600))
-        s.set_alpha(5) # прозрачность
+        s.set_alpha(5)  # прозрачность
         s.fill(BG_COLOR)
         screen.blit(s, (0, 0))
         screen.blit(title_text, title_rect)
@@ -392,9 +421,9 @@ def main():
                 print(records)
                 records.append(score)
                 records.sort(reverse=True)
-                print(records)                
+                print(records)
             with open("records.txt", "w") as file:
-                file.write(' '.join(list(map(str, records))[:-1]))
+                file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
 
         screen.fill(BG_COLOR)
