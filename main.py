@@ -173,9 +173,7 @@ def show_start_menu():
 
     records_font = pygame.font.Font(None, 24)
     records_title = records_font.render("Рекорды:", True, WHITE)
-    records_title_rect = records_title.get_rect(
-        topright=(width - 20, 20)
-    )
+    records_title_rect = records_title.get_rect(topright=(100, 20))
 
     records = load_records()  # Загружаем рекорды
 
@@ -186,40 +184,42 @@ def show_start_menu():
         pygame.draw.rect(screen, BLACK, button_box, 2)  # Контур кнопки
         screen.blit(button_text, button_rect)
 
-        # Выводим рекордоы
+        # Вывод рекордов
         screen.blit(records_title, records_title_rect)
-
-        for i, record in enumerate(records):
-            record_text = records_font.render(f"{i + 1}. {record}", True, WHITE)
-            record_rect = record_text.get_rect(
-                topright=(width - 25, records_title_rect.bottom + 10 + i * 20)
-            )
-            screen.blit(record_text, record_rect)
+    
+        if records:
+            for i, record in enumerate(records):
+                record_text = records_font.render(f"{i + 1}. {record}", True, WHITE)
+                record_rect = record_text.get_rect(topright=(70, records_title_rect.bottom + 5 +  i * 20))
+                screen.blit(record_text, record_rect)
+        else:
+            no_records_text = records_font.render("Нет рекордов", True, WHITE)
+            no_records_rect = no_records_text.get_rect(center=(80, records_title_rect.bottom + 15))
+            screen.blit(no_records_text, no_records_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(
-                event.pos
-            ):
+            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(event.pos):
                 return
 
         pygame.display.flip()
-
 
 def load_records():
     """Загружает три рекорда из файла records.txt."""
     records = []
     try:
-        with open("records.txt", "r") as file:
-            records = file.readline().strip().split()
-    except FileNotFoundError:
-        records = ["Нет рекордов"] * 3
-    except Exception as e:
-        records = [f"Ошибка: {str(e)}"]
+        with open('records.txt', 'r') as file:
+            records = [int(record) for record in file.readline().strip().split() if int(record) > 0]
 
-    return records
+    except FileNotFoundError:
+        return []
+    except Exception as e:
+        return [f"Ошибка: {str(e)}"]
+    
+    return records if records else []
+
 
 
 def show_game_over_menu(score):
