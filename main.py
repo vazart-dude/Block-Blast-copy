@@ -128,36 +128,6 @@ def restart_game():
     main()
 
 
-# Меню победы
-def show_victory_menu(score):
-    """Отображает меню победы с кнопкой рестарта."""
-    font = pygame.font.Font(None, 48)
-    text = font.render(f"Победа! Счет: {score}", True, BLACK)
-    text_rect = text.get_rect(center=(width // 2, height // 2 - 50))
-
-    button_font = pygame.font.Font(None, 36)
-    button_text = button_font.render("ИГРАТЬ СНОВА", True, BLACK)
-    button_rect = button_text.get_rect(center=(width // 2, height // 2 + 30))
-    button_box = button_rect.inflate(20, 10)
-
-    while True:
-        screen.fill(BG_COLOR)
-        screen.blit(text, text_rect)
-        pygame.draw.rect(screen, GRAY, button_box)  # Кнопка
-        pygame.draw.rect(screen, BLACK, button_box, 2)  # Контур кнопки
-        screen.blit(button_text, button_rect)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(
-                event.pos
-            ):
-                restart_game()
-
-        pygame.display.flip()
-
 
 # Меню старта игры
 def show_start_menu():
@@ -444,9 +414,6 @@ def main():
                         square_y = mouse_y - offset_y
                         block.move(square_x, square_y)
 
-        # Проверяем победу
-        if score >= 1000:
-            show_victory_menu(score)
 
         # Проверяем проигрыш с последующей записью рекордов
         if is_game_over():
