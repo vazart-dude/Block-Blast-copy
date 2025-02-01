@@ -403,22 +403,6 @@ def main():
     paused = False
     while running:
         global offset_x, offset_y
-
-        # Отрисовка кнопки паузы поверх игрового поля
-        pause_button_font = pygame.font.Font(None, 24)
-        pause_button_text = pause_button_font.render("Пауза", True, WHITE)
-        pause_button_rect = pause_button_text.get_rect(topright=(width - 10, 10))
-        pause_button_box = pause_button_rect.inflate(10, 10)
-        screen.blit(pause_button_text, pause_button_rect)
-        pygame.draw.rect(screen, GRAY, pause_button_box, 2)  # Контур кнопки
-
-        # Проверяем нажатие кнопки паузы
-        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(pygame.mouse.get_pos()):
-            paused = not paused
-            if paused:
-                show_pause_menu()
-            else:
-                continue
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -461,7 +445,7 @@ def main():
                         block.move(square_x, square_y)
 
         # Проверяем победу
-        if score >= 100:
+        if score >= 1000:
             show_victory_menu(score)
 
         # Проверяем проигрыш с последующей записью рекордов
@@ -480,6 +464,23 @@ def main():
         font = pygame.font.Font(None, 36)
         score_text = font.render(f"Счет: {score}", True, WHITE)
         screen.blit(score_text, (10, 10))
+        
+        # Отрисовка кнопки паузы поверх игрового поля
+
+        pause_button_font = pygame.font.Font(None, 24)
+        pause_button_text = pause_button_font.render("Пауза", True, WHITE)
+        pause_button_rect = pause_button_text.get_rect(topright=(width - 10, 10))
+        pause_button_box = pause_button_rect.inflate(10, 10)
+        screen.blit(pause_button_text, pause_button_rect)
+        line = pygame.draw.rect(screen, GRAY, pause_button_box, 2)  # Контур кнопки
+            
+        # Проверяем нажатие кнопки паузы
+        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(pygame.mouse.get_pos()):
+            paused = not paused
+            if paused:
+                show_pause_menu()
+            else:
+                continue
 
         for row in range(grid_size):
             for col in range(grid_size):
