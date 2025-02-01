@@ -404,11 +404,6 @@ def main():
     while running:
         global offset_x, offset_y
 
-        screen.fill(BG_COLOR)
-        font = pygame.font.Font(None, 36)
-        score_text = font.render(f"Счет: {score}", True, WHITE)
-        screen.blit(score_text, (10, 10))
-
         # Отрисовка кнопки паузы поверх игрового поля
         pause_button_font = pygame.font.Font(None, 24)
         pause_button_text = pause_button_font.render("Пауза", True, WHITE)
@@ -466,7 +461,7 @@ def main():
                         block.move(square_x, square_y)
 
         # Проверяем победу
-        if score >= 1000:
+        if score >= 100:
             show_victory_menu(score)
 
         # Проверяем проигрыш с последующей записью рекордов
@@ -480,6 +475,11 @@ def main():
             with open("records.txt", "w") as file:
                 file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
+                
+        screen.fill(BG_COLOR)
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f"Счет: {score}", True, WHITE)
+        screen.blit(score_text, (10, 10))
 
         for row in range(grid_size):
             for col in range(grid_size):
