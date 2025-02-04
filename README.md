@@ -1,3 +1,5 @@
+# THIS BRANCH IS NOT FOR RUBLIC USAGE <br> CHECK MAIN BRACH OR RELEASES
+
 # 🚀 Block BLast
 
 Аналог мобильной игры Block Blast для нативного запуска на вашем ПК или ноутбуке
