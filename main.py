@@ -31,6 +31,10 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 icon = pygame.image.load(os.path.join(script_path, "data", "icon.png"))
 pygame.display.set_icon(icon)
 
+# Загрузка логотипа игры
+logo = pygame.image.load(os.path.join(script_path, "data", "block-blast-logo.png"))
+logo_rect = logo.get_rect(center=(width // 2, height // 2 - 45))
+
 # Шаблоны блоков (матрицы)
 TEMPLATES = [
     # Квадраты
@@ -149,7 +153,7 @@ def show_start_menu():
 
     while True:
         screen.fill(BG_COLOR)
-        screen.blit(text, text_rect)
+        screen.blit(logo, logo_rect)
         pygame.draw.rect(screen, GRAY, button_box)  # Кнопка
         pygame.draw.rect(screen, BLACK, button_box, 2)  # Контур кнопки
         screen.blit(button_text, button_rect)
