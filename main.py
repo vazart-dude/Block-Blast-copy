@@ -29,6 +29,7 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Block Blast")
 script_path = os.path.dirname(os.path.abspath(__file__))
 icon = pygame.image.load(os.path.join(script_path, "data", "icon.png"))
+records_path = os.path.join(script_path, "data", "records.txt")
 pygame.display.set_icon(icon)
 
 # Загрузка логотипа игры
@@ -184,7 +185,7 @@ def load_records():
     """Загружает три рекорда из файла records.txt."""
     records = []
     try:
-        with open('records.txt', 'r') as file:
+        with open(records_path, 'r') as file:
             records = [int(record) for record in file.readline().strip().split() if int(record) > 0]
 
     except FileNotFoundError:
@@ -421,13 +422,13 @@ def main():
 
         # Проверяем проигрыш с последующей записью рекордов
         if is_game_over():
-            with open("records.txt", "r") as file:
+            with open(records_path, "r") as file:
                 records = list(map(int, file.readline().split()))
                 print(records)
                 records.append(score)
                 records.sort(reverse=True)
                 print(records)
-            with open("records.txt", "w") as file:
+            with open(records_path, "w") as file:
                 file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
                 
