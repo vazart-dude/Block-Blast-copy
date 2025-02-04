@@ -44,7 +44,7 @@ python main.py
 ```
 ### Установка .exe файла
 
-Установить новую версию можно [ТУТ](https://github.com/sadsafxrx/Block-Blast/releases/tag/v0.0.1)
+Установить новую версию можно [ТУТ](https://github.com/sadsafxrx/Block-Blast/releases))
 
 ---
 
