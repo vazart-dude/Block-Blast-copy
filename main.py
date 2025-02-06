@@ -488,44 +488,5 @@ def main():
         pygame.display.flip()
         clock.tick(144)
 
-
-def show_settings_menu():
-    """Меню паузы с возможностью перезапуска игры."""
-    settings_running = True
-    while settings_running:
-        screen.fill(BG_COLOR)
-        font = pygame.font.Font(None, 36)
-
-        title_text = font.render("Настройки", True, WHITE)
-        title_rect = title_text.get_rect(center=(width // 2, height // 2 - 100))
-        screen.blit(title_text, title_rect)
-
-        # Кнопка перезапуска игры
-        restart_button = font.render("Начать заново", True, WHITE)
-        restart_button_rect = restart_button.get_rect(
-            center=(width // 2, height // 2 + 30)
-        )
-        pygame.draw.rect(screen, GRAY, restart_button_rect.inflate(20, 10))
-        screen.blit(restart_button, restart_button_rect)
-
-        # Кнопка выхода из настроек
-        back_button = font.render("Назад", True, WHITE)
-        back_button_rect = back_button.get_rect(center=(width // 2, height // 2 + 90))
-        pygame.draw.rect(screen, GRAY, back_button_rect.inflate(20, 10))
-        screen.blit(back_button, back_button_rect)
-
-        pygame.display.flip()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if restart_button_rect.collidepoint(event.pos):
-                    restart_game()
-                if back_button_rect.collidepoint(event.pos):
-                    settings_running = False
-
-
 if __name__ == "__main__":
     main()
