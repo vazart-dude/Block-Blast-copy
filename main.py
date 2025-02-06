@@ -133,7 +133,6 @@ def restart_game():
     main()
 
 
-
 # Меню старта игры
 def show_start_menu():
     """Отображает стартовое меню с кнопкой начала игры и рекордами."""
@@ -161,40 +160,50 @@ def show_start_menu():
 
         # Вывод рекордов
         screen.blit(records_title, records_title_rect)
-    
+
         if records:
             for i, record in enumerate(records):
                 record_text = records_font.render(f"{i + 1}. {record}", True, WHITE)
-                record_rect = record_text.get_rect(topright=(70, records_title_rect.bottom + 5 +  i * 20))
+                record_rect = record_text.get_rect(
+                    topright=(70, records_title_rect.bottom + 5 + i * 20)
+                )
                 screen.blit(record_text, record_rect)
         else:
             no_records_text = records_font.render("Нет рекордов", True, WHITE)
-            no_records_rect = no_records_text.get_rect(center=(80, records_title_rect.bottom + 15))
+            no_records_rect = no_records_text.get_rect(
+                center=(80, records_title_rect.bottom + 15)
+            )
             screen.blit(no_records_text, no_records_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(
+                event.pos
+            ):
                 return
 
         pygame.display.flip()
+
 
 def load_records():
     """Загружает три рекорда из файла records.txt."""
     records = []
     try:
-        with open(records_path, 'r') as file:
-            records = [int(record) for record in file.readline().strip().split() if int(record) > 0]
+        with open(records_path, "r") as file:
+            records = [
+                int(record)
+                for record in file.readline().strip().split()
+                if int(record) > 0
+            ]
 
     except FileNotFoundError:
         return []
     except Exception as e:
         return [f"Ошибка: {str(e)}"]
-    
-    return records if records else []
 
+    return records if records else []
 
 
 def show_game_over_menu(score):
@@ -234,24 +243,29 @@ def show_game_over_menu(score):
 
         pygame.display.flip()
 
+
 def show_pause_menu():
     # Полупрозрачный фон
     overlay = pygame.Surface((width, height), pygame.SRCALPHA)
-    overlay.fill((0,0,0, 128))  # RGBA: черный с 50% прозрачностью
-    screen.blit(overlay, (0,0))
-    
+    overlay.fill((0, 0, 0, 128))  # RGBA: черный с 50% прозрачностью
+    screen.blit(overlay, (0, 0))
+
     # Кнопка возврата в меню
     menu_button_text = pygame.font.Font(None, 36).render("В главное меню", True, WHITE)
-    menu_button_rect = menu_button_text.get_rect(center=(width//2, height//2 + 50))
+    menu_button_rect = menu_button_text.get_rect(center=(width // 2, height // 2 + 50))
     screen.blit(menu_button_text, menu_button_rect)
-    pygame.draw.rect(screen, (150,150,150), menu_button_rect.inflate(10,5), 2)
-    
+    pygame.draw.rect(screen, (150, 150, 150), menu_button_rect.inflate(10, 5), 2)
+
     # Кнопка продолжить игру
-    continue_button_text = pygame.font.Font(None, 36).render("Продолжить игру", True, WHITE)
-    continue_button_rect = continue_button_text.get_rect(center=(width//2, height//2 - 50))
+    continue_button_text = pygame.font.Font(None, 36).render(
+        "Продолжить игру", True, WHITE
+    )
+    continue_button_rect = continue_button_text.get_rect(
+        center=(width // 2, height // 2 - 50)
+    )
     screen.blit(continue_button_text, continue_button_rect)
-    pygame.draw.rect(screen, (150,150,150), continue_button_rect.inflate(10,5), 2)
-    
+    pygame.draw.rect(screen, (150, 150, 150), continue_button_rect.inflate(10, 5), 2)
+
     while True:
         # Обработка событий в меню
         for event in pygame.event.get():
@@ -259,14 +273,15 @@ def show_pause_menu():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if menu_button_rect.inflate(10,5).collidepoint(event.pos):
+                if menu_button_rect.inflate(10, 5).collidepoint(event.pos):
                     restart_game()
-                if continue_button_rect.inflate(10,5).collidepoint(event.pos):
+                if continue_button_rect.inflate(10, 5).collidepoint(event.pos):
                     return  # Продолжить игру
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 return  # Выход из паузы
-                
+
         pygame.display.update()
+
 
 # Основная функция игры
 def main():
@@ -378,7 +393,7 @@ def main():
     paused = False
     while running:
         global offset_x, offset_y
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -419,7 +434,6 @@ def main():
                         square_y = mouse_y - offset_y
                         block.move(square_x, square_y)
 
-
         # Проверяем проигрыш с последующей записью рекордов
         if is_game_over():
             with open(records_path, "r") as file:
@@ -431,23 +445,25 @@ def main():
             with open(records_path, "w") as file:
                 file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
-                
+
         screen.fill(BG_COLOR)
         font = pygame.font.Font(None, 36)
         score_text = font.render(f"Счет: {score}", True, WHITE)
         screen.blit(score_text, (10, 10))
-        
+
         # Отрисовка кнопки паузы поверх игрового поля
 
         pause_button_font = pygame.font.Font(None, 24)
-        pause_button_text = pause_button_font.render("Пауза", True, WHITE)
+        pause_button_text = pause_button_font.render("Настройки", True, WHITE)
         pause_button_rect = pause_button_text.get_rect(topright=(width - 10, 10))
         pause_button_box = pause_button_rect.inflate(10, 10)
         screen.blit(pause_button_text, pause_button_rect)
         line = pygame.draw.rect(screen, GRAY, pause_button_box, 2)  # Контур кнопки
-            
+
         # Проверяем нажатие кнопки паузы
-        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(pygame.mouse.get_pos()):
+        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(
+            pygame.mouse.get_pos()
+        ):
             paused = not paused
             if paused:
                 show_pause_menu()
@@ -471,6 +487,44 @@ def main():
 
         pygame.display.flip()
         clock.tick(144)
+
+
+def show_settings_menu():
+    """Меню паузы с возможностью перезапуска игры."""
+    settings_running = True
+    while settings_running:
+        screen.fill(BG_COLOR)
+        font = pygame.font.Font(None, 36)
+
+        title_text = font.render("Настройки", True, WHITE)
+        title_rect = title_text.get_rect(center=(width // 2, height // 2 - 100))
+        screen.blit(title_text, title_rect)
+
+        # Кнопка перезапуска игры
+        restart_button = font.render("Начать заново", True, WHITE)
+        restart_button_rect = restart_button.get_rect(
+            center=(width // 2, height // 2 + 30)
+        )
+        pygame.draw.rect(screen, GRAY, restart_button_rect.inflate(20, 10))
+        screen.blit(restart_button, restart_button_rect)
+
+        # Кнопка выхода из настроек
+        back_button = font.render("Назад", True, WHITE)
+        back_button_rect = back_button.get_rect(center=(width // 2, height // 2 + 90))
+        pygame.draw.rect(screen, GRAY, back_button_rect.inflate(20, 10))
+        screen.blit(back_button, back_button_rect)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    restart_game()
+                if back_button_rect.collidepoint(event.pos):
+                    settings_running = False
 
 
 if __name__ == "__main__":
