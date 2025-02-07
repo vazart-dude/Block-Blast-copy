@@ -1,4 +1,8 @@
-# 🚀 Block BLast
+<div align="center">
+  <img src="./data/block-blast-logo.png" alt="Logo" width="400">
+</div>
+
+
 
 Аналог мобильной игры Block Blast для нативного запуска на вашем ПК или ноутбуке
 
