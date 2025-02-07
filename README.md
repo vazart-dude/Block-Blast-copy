@@ -44,7 +44,7 @@
 ### Ручная установка
 1. Клонируйте репозиторий:
 ```
-git clone https://github.com/Block-Blast/tree/testing
+git clone https://github.com/Block-Blast/tree/main
 ```
 2. Установите зависимости:
 ```
