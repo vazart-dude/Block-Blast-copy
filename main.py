@@ -29,6 +29,7 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Block Blast")
 script_path = os.path.dirname(os.path.abspath(__file__))
 icon = pygame.image.load(os.path.join(script_path, "data", "icon.png"))
+records_path = os.path.join(script_path, "data", "records.txt")
 pygame.display.set_icon(icon)
 
 # Загрузка логотипа игры
@@ -132,7 +133,6 @@ def restart_game():
     main()
 
 
-
 # Меню старта игры
 def show_start_menu():
     """Отображает стартовое меню с кнопкой начала игры и рекордами."""
@@ -160,40 +160,50 @@ def show_start_menu():
 
         # Вывод рекордов
         screen.blit(records_title, records_title_rect)
-    
+
         if records:
             for i, record in enumerate(records):
                 record_text = records_font.render(f"{i + 1}. {record}", True, WHITE)
-                record_rect = record_text.get_rect(topright=(70, records_title_rect.bottom + 5 +  i * 20))
+                record_rect = record_text.get_rect(
+                    topright=(70, records_title_rect.bottom + 5 + i * 20)
+                )
                 screen.blit(record_text, record_rect)
         else:
             no_records_text = records_font.render("Нет рекордов", True, WHITE)
-            no_records_rect = no_records_text.get_rect(center=(80, records_title_rect.bottom + 15))
+            no_records_rect = no_records_text.get_rect(
+                center=(80, records_title_rect.bottom + 15)
+            )
             screen.blit(no_records_text, no_records_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONDOWN and button_box.collidepoint(
+                event.pos
+            ):
                 return
 
         pygame.display.flip()
+
 
 def load_records():
     """Загружает три рекорда из файла records.txt."""
     records = []
     try:
-        with open('records.txt', 'r') as file:
-            records = [int(record) for record in file.readline().strip().split() if int(record) > 0]
+        with open(records_path, "r") as file:
+            records = [
+                int(record)
+                for record in file.readline().strip().split()
+                if int(record) > 0
+            ]
 
     except FileNotFoundError:
         return []
     except Exception as e:
         return [f"Ошибка: {str(e)}"]
-    
-    return records if records else []
 
+    return records if records else []
 
 
 def show_game_over_menu(score):
@@ -233,24 +243,29 @@ def show_game_over_menu(score):
 
         pygame.display.flip()
 
+
 def show_pause_menu():
     # Полупрозрачный фон
     overlay = pygame.Surface((width, height), pygame.SRCALPHA)
-    overlay.fill((0,0,0, 128))  # RGBA: черный с 50% прозрачностью
-    screen.blit(overlay, (0,0))
-    
+    overlay.fill((0, 0, 0, 128))  # RGBA: черный с 50% прозрачностью
+    screen.blit(overlay, (0, 0))
+
     # Кнопка возврата в меню
     menu_button_text = pygame.font.Font(None, 36).render("В главное меню", True, WHITE)
-    menu_button_rect = menu_button_text.get_rect(center=(width//2, height//2 + 50))
+    menu_button_rect = menu_button_text.get_rect(center=(width // 2, height // 2 + 50))
     screen.blit(menu_button_text, menu_button_rect)
-    pygame.draw.rect(screen, (150,150,150), menu_button_rect.inflate(10,5), 2)
-    
+    pygame.draw.rect(screen, (150, 150, 150), menu_button_rect.inflate(10, 5), 2)
+
     # Кнопка продолжить игру
-    continue_button_text = pygame.font.Font(None, 36).render("Продолжить игру", True, WHITE)
-    continue_button_rect = continue_button_text.get_rect(center=(width//2, height//2 - 50))
+    continue_button_text = pygame.font.Font(None, 36).render(
+        "Продолжить игру", True, WHITE
+    )
+    continue_button_rect = continue_button_text.get_rect(
+        center=(width // 2, height // 2 - 50)
+    )
     screen.blit(continue_button_text, continue_button_rect)
-    pygame.draw.rect(screen, (150,150,150), continue_button_rect.inflate(10,5), 2)
-    
+    pygame.draw.rect(screen, (150, 150, 150), continue_button_rect.inflate(10, 5), 2)
+
     while True:
         # Обработка событий в меню
         for event in pygame.event.get():
@@ -258,14 +273,15 @@ def show_pause_menu():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if menu_button_rect.inflate(10,5).collidepoint(event.pos):
+                if menu_button_rect.inflate(10, 5).collidepoint(event.pos):
                     restart_game()
-                if continue_button_rect.inflate(10,5).collidepoint(event.pos):
+                if continue_button_rect.inflate(10, 5).collidepoint(event.pos):
                     return  # Продолжить игру
             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 return  # Выход из паузы
-                
+
         pygame.display.update()
+
 
 # Основная функция игры
 def main():
@@ -290,24 +306,45 @@ def main():
         x = 35
         templates = list(TEMPLATES)
         random.shuffle(templates)
+
         for i in range(3):
-
             probability = random.randint(1, 100)
-            if probability <= 20:
-                template = random.choice(templates[0])  # Квадраты
-            if 20 < probability <= 45:
-                template = random.choice(templates[1])  # Линии
-            if 45 < probability <= 70:
-                template = random.choice(templates[2])  # Маленькие уголки
-            if 70 < probability <= 90:
-                template = random.choice(templates[3])  # Г-образные
-            if probability >= 90:
-                template = random.choice(templates[4])  # Большие уголки
 
-            template_group = random.choice(templates)
-            block = Block(
-                random.choice(template_group), x, height - 150, field_x, field_y
-            )
+            if score < 1000:
+                if probability <= 20:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 20 < probability <= 45:
+                    template = random.choice(templates[1])  # Линии
+                elif 45 < probability <= 70:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 70 < probability <= 90:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+            elif score < 1500:
+                if probability <= 10:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 10 < probability <= 30:
+                    template = random.choice(templates[1])  # Линии
+                elif 30 < probability <= 50:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 50 < probability <= 80:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+            else:
+                if probability <= 5:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 5 < probability <= 20:
+                    template = random.choice(templates[1])  # Линии
+                elif 20 < probability <= 40:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 40 < probability <= 75:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+
+            block = Block(template, x, height - 150, field_x, field_y)
             blocks.append(block)
             x += block_width + gap
         return blocks
@@ -349,7 +386,7 @@ def main():
         score += sum(sum(row) for row in block.template)
 
     def clear_lines():
-        """Очистка заполненных строк и столбцов."""
+        """Очистка заполненных строк и столбцов с увеличением очков за несколько линий."""
         nonlocal score
         rows_to_clear = []
         cols_to_clear = []
@@ -370,14 +407,18 @@ def main():
             for row in range(grid_size):
                 field[row][col] = None
 
-        # Подсчет очков
-        score += len(rows_to_clear + cols_to_clear) * (grid_size * 3 + 5)
+        # Подсчет очков с увеличением за комбо
+        lines_cleared = len(rows_to_clear) + len(cols_to_clear)
+        if lines_cleared > 1:
+            score += lines_cleared * (grid_size * 5 + 10)
+        else:
+            score += grid_size * 3 + 5
 
     running = True
     paused = False
     while running:
         global offset_x, offset_y
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -418,24 +459,23 @@ def main():
                         square_y = mouse_y - offset_y
                         block.move(square_x, square_y)
 
-
         # Проверяем проигрыш с последующей записью рекордов
         if is_game_over():
-            with open("records.txt", "r") as file:
+            with open(records_path, "r") as file:
                 records = list(map(int, file.readline().split()))
                 print(records)
                 records.append(score)
                 records.sort(reverse=True)
                 print(records)
-            with open("records.txt", "w") as file:
+            with open(records_path, "w") as file:
                 file.write(" ".join(list(map(str, records))[:-1]))
             show_game_over_menu(score)
-                
+
         screen.fill(BG_COLOR)
         font = pygame.font.Font(None, 36)
         score_text = font.render(f"Счет: {score}", True, WHITE)
         screen.blit(score_text, (10, 10))
-        
+
         # Отрисовка кнопки паузы поверх игрового поля
 
         pause_button_font = pygame.font.Font(None, 24)
@@ -444,9 +484,11 @@ def main():
         pause_button_box = pause_button_rect.inflate(10, 10)
         screen.blit(pause_button_text, pause_button_rect)
         line = pygame.draw.rect(screen, GRAY, pause_button_box, 2)  # Контур кнопки
-            
+
         # Проверяем нажатие кнопки паузы
-        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(pygame.mouse.get_pos()):
+        if pygame.mouse.get_pressed()[0] and pause_button_box.collidepoint(
+            pygame.mouse.get_pos()
+        ):
             paused = not paused
             if paused:
                 show_pause_menu()
