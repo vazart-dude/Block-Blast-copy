@@ -306,24 +306,48 @@ def main():
         x = 35
         templates = list(TEMPLATES)
         random.shuffle(templates)
+
         for i in range(3):
-
             probability = random.randint(1, 100)
-            if probability <= 20:
-                template = random.choice(templates[0])  # Квадраты
-            if 20 < probability <= 45:
-                template = random.choice(templates[1])  # Линии
-            if 45 < probability <= 70:
-                template = random.choice(templates[2])  # Маленькие уголки
-            if 70 < probability <= 90:
-                template = random.choice(templates[3])  # Г-образные
-            if probability >= 90:
-                template = random.choice(templates[4])  # Большие уголки
 
-            template_group = random.choice(templates)
-            block = Block(
-                random.choice(template_group), x, height - 150, field_x, field_y
-            )
+            if score < 1000:
+                print('low level')  #! debug
+                if probability <= 20:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 20 < probability <= 45:
+                    template = random.choice(templates[1])  # Линии
+                elif 45 < probability <= 70:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 70 < probability <= 90:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+            elif score < 1500:
+                print('mid level')  #! debug
+                if probability <= 10:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 10 < probability <= 30:
+                    template = random.choice(templates[1])  # Линии
+                elif 30 < probability <= 50:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 50 < probability <= 80:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+            else:
+                print('high level') #! debug
+                if probability <= 5:
+                    template = random.choice(templates[0])  # Квадраты
+                elif 5 < probability <= 20:
+                    template = random.choice(templates[1])  # Линии
+                elif 20 < probability <= 40:
+                    template = random.choice(templates[2])  # Маленькие уголки
+                elif 40 < probability <= 75:
+                    template = random.choice(templates[3])  # Г-образные
+                else:
+                    template = random.choice(templates[4])  # Большие уголки
+
+            block = Block(template, x, height - 150, field_x, field_y)
             blocks.append(block)
             x += block_width + gap
         return blocks
@@ -365,7 +389,7 @@ def main():
         score += sum(sum(row) for row in block.template)
 
     def clear_lines():
-        """Очистка заполненных строк и столбцов."""
+        """Очистка заполненных строк и столбцов с увеличением очков за несколько линий."""
         nonlocal score
         rows_to_clear = []
         cols_to_clear = []
@@ -386,8 +410,12 @@ def main():
             for row in range(grid_size):
                 field[row][col] = None
 
-        # Подсчет очков
-        score += len(rows_to_clear + cols_to_clear) * (grid_size * 3 + 5)
+        # Подсчет очков с увеличением за комбо
+        lines_cleared = len(rows_to_clear) + len(cols_to_clear)
+        if lines_cleared > 1:
+            score += lines_cleared * (grid_size * 5 + 10)
+        else:
+            score += grid_size * 3 + 5
 
     running = True
     paused = False
