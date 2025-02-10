@@ -482,7 +482,7 @@ def main():
         # Отрисовка кнопки паузы поверх игрового поля
 
         pause_button_font = pygame.font.Font(None, 24)
-        pause_button_text = pause_button_font.render("Пауза", True, WHITE)
+        pause_button_text = pause_button_font.render("Настройки", True, WHITE)
         pause_button_rect = pause_button_text.get_rect(topright=(width - 10, 10))
         pause_button_box = pause_button_rect.inflate(10, 10)
         screen.blit(pause_button_text, pause_button_rect)
@@ -515,7 +515,6 @@ def main():
 
         pygame.display.flip()
         clock.tick(144)
-
 
 if __name__ == "__main__":
     main()
