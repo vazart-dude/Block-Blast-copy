@@ -311,6 +311,7 @@ def main():
             probability = random.randint(1, 100)
 
             if score < 1000:
+                print('low level')  #! debug
                 if probability <= 20:
                     template = random.choice(templates[0])  # Квадраты
                 elif 20 < probability <= 45:
@@ -322,6 +323,7 @@ def main():
                 else:
                     template = random.choice(templates[4])  # Большие уголки
             elif score < 1500:
+                print('mid level')  #! debug
                 if probability <= 10:
                     template = random.choice(templates[0])  # Квадраты
                 elif 10 < probability <= 30:
@@ -333,6 +335,7 @@ def main():
                 else:
                     template = random.choice(templates[4])  # Большие уголки
             else:
+                print('high level') #! debug
                 if probability <= 5:
                     template = random.choice(templates[0])  # Квадраты
                 elif 5 < probability <= 20:
